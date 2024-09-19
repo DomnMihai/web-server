@@ -1,0 +1,41 @@
+// Nigdy nie robic scripted jenkins file
+properties([
+    parameters([
+        string(defaultValue: 'main', description: '', name: 'source_branch', trim: true),
+        booleanParam(defaultValue: false, description: '', name: 'send_email')
+    ]),
+    disableConcurrentBuilds(),
+    disableResume()
+])
+
+timeout(time: 3, unit: "MINUTES") {
+    node {
+        stage("Checkout") {
+            // Print parameters
+            echo("PARAM source_branch: '${params.source_branch}'")
+            echo("PARAM send_email: '${params.send_email}'")
+
+            sh("ls -la") // Debug
+            currentBuild.description = params.source_branch
+            checkout(
+                scm: scmGit(
+                    branches: [[name: "refs/heads/${params.source_branch}"]],
+                    extensions: [cleanBeforeCheckout(deleteUntrackedNestedRepositories: true)],
+                    userRemoteConfigs: [
+                        [credentialsId: 'github-write', url: 'https://github.com/DomnMihai/web-server.git']
+                    ]
+                ),
+                changelog: true,
+                poll: false,
+            )
+            sh("ls -la") // Debug
+        }
+
+
+
+
+        stage("Clean workspace") {
+            cleanWs()
+        }
+    }
+}
