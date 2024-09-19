@@ -37,6 +37,13 @@ timeout(time: 3, unit: "MINUTES") {
             mavenPath = tool(name: 'maven-3.9.9', type: 'maven') + "/bin"
             sh("${mavenPath}/mvn install -DskipTests")
         }
+        stage("Maven test") {
+            catchError(buildResult: 'FAILURE', message: 'Maven test fail', stageResult: 'FAILURE') {
+                sh("${mavenPath}/mvn test")
+            }
+
+            junit(stdioRetention: '', testResults: 'target/surefire-reports/TEST-jenkins.workshops.*.xml')
+        }
 
         stage("Clean workspace") {
             cleanWs()
