@@ -10,6 +10,8 @@ properties([
 
 timeout(time: 3, unit: "MINUTES") {
     node {
+        String mavenPath;
+
         stage("Checkout") {
             // Print parameters
             echo("PARAM source_branch: '${params.source_branch}'")
@@ -31,8 +33,10 @@ timeout(time: 3, unit: "MINUTES") {
             sh("ls -la") // Debug
         }
 
-
-
+        stage("Maven install") {
+            mavenPath = tool(name: 'maven-3.9.9', type: 'maven') + "/bin"
+            sh("${mavenPath}/mvn install -DskipTests")
+        }
 
         stage("Clean workspace") {
             cleanWs()
