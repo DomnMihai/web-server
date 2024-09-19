@@ -8,6 +8,7 @@ public class Navigation {
         responseBuilder.append("You can visit the following pages:<br>\n");
         responseBuilder.append("<ul>\n");
         responseBuilder.append("  <li>").append("<a href='/'>home</a>").append("</li>\n");
+        responseBuilder.append("  <li>").append("<a href='/hash-me'>hash me</a>").append("</li>\n");
         responseBuilder.append("  <li>").append("<a href='/ciezka-praca'>ciezka praca</a>").append("</li>\n");
         responseBuilder.append("</ul>\n");
         return responseBuilder.toString();

@@ -22,7 +22,7 @@ public class CiezkaPraca implements HttpHandler {
         }
 
         // Response
-        final StringBuilder responseBuilder = new StringBuilder(300);
+        final StringBuilder responseBuilder = new StringBuilder(250);
         responseBuilder.append("<h1>Ciezka praca</h1>\n");
         responseBuilder.append("Sleep: ").append(sleepTime).append("<br>\n");
 

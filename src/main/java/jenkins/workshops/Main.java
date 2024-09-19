@@ -2,6 +2,7 @@ package jenkins.workshops;
 
 import com.sun.net.httpserver.HttpServer;
 import jenkins.workshops.server.CiezkaPraca;
+import jenkins.workshops.server.HashMeHandler;
 import jenkins.workshops.server.RootHandler;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Main {
         try {
             final HttpServer server = HttpServer.create(inetSocketAddress, 0);
             server.createContext("/", new RootHandler());
+            server.createContext("/hash-me", new HashMeHandler());
             server.createContext("/ciezka-praca", new CiezkaPraca());
             server.start();
             System.out.println("I am listening at 127.0.0.1:" + port);
