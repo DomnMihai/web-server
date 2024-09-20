@@ -45,6 +45,19 @@ pipeline {
                 }
             }
         }
+
+        stage("Maven install") {
+            options {
+                timeout(time: 3, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    mavenPath = tool(name: 'maven-3.9.9', type: 'maven') + "/bin"
+                    sh("${mavenPath}/mvn install -DskipTests")
+                    sh("ls -lah target/") // DEBUG
+                }
+            }
+        }
     }
 
     post {
