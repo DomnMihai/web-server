@@ -8,12 +8,12 @@ terraform {
     }
   }
 
-#   backend "s3" {
-#     bucket = "workshops-1-terraform-state-eun1-448740566997"
-#     key = "web-server.tfstate"
-#     dynamodb_table = "workshops-1-terraform-state-lock"
-#     region = "eu-north-1"
-#   }
+  backend "s3" {
+    bucket = "workshops-1-terraform-state-eun1-448740566997"
+    key = "web-server.tfstate"
+    dynamodb_table = "workshops-1-terraform-state-lock"
+    region = "eu-north-1"
+  }
 }
 
 provider "aws" {
