@@ -73,7 +73,18 @@ pipeline {
                     }
 
                     junit(stdioRetention: '', testResults: 'target/surefire-reports/TEST-jenkins.workshops.*.xml')
-
+                    recordCoverage(
+                        tools: [[parser: 'JACOCO']],
+                        id: 'jacoco',
+                        name: 'Jacoco coverage',
+                        enabledForFailure: true,
+                        skipPublishingChecks: true,
+                        sourceCodeRetention: 'LAST_BUILD',
+                        qualityGates: [
+                            [metric: 'LINE', threshold: 60, criticality: 'FAILURE'],
+                            [metric: 'BRANCH', threshold: 80, criticality: 'FAILURE']
+                        ]
+                    );
 
                     if (currentBuild.result != null && currentBuild.result != "SUCCESS") {
                         error("Maven test failed")
