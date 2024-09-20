@@ -15,7 +15,36 @@ pipeline {
     }
 
     stages {
+        stage("Checkout") {
+            options {
+                timeout(time: 1, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    // Print parameters
+                    echo("PARAM source_branch: '${params.source_branch}'")
+                    echo("PARAM skip_unit_tests: '${params.skip_unit_tests}'")
 
+                    // Checkout
+                    sh("ls -la") // Debug
+                    currentBuild.description = params.source_branch
+                    checkout(
+                        scm: scmGit(
+                            branches: [[name: "refs/heads/${params.source_branch}"]],
+                            extensions: [cleanBeforeCheckout(deleteUntrackedNestedRepositories: true)],
+                            userRemoteConfigs: [
+                                [credentialsId: 'github-write', url: 'https://github.com/DomnMihai/web-server.git']
+                            ]
+                        ),
+                        changelog: true,
+                        poll: false,
+                    )
+                    sh("ls -la") // Debug
+
+                    // Read configuration
+                }
+            }
+        }
     }
 
     post {
