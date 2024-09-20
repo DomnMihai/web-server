@@ -1,0 +1,2 @@
+deployment:
+  systemdServiceName: workshops-web-server.service

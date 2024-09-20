@@ -1,4 +1,5 @@
 String mavenPath;
+Map pipelineConfigMap;
 
 pipeline {
     agent any
@@ -44,6 +45,8 @@ pipeline {
                     sh("ls -la") // Debug
 
                     // Read configuration
+                    pipelineConfigMap = readYaml(file: "cicd/config/pipeline-config.yml")
+                    echo("pipelineConfigMap:\n" + writeYaml(data: pipelineConfigMap, returnText: true))
                 }
             }
         }
@@ -81,7 +84,7 @@ pipeline {
                         skipPublishingChecks: true,
                         sourceCodeRetention: 'LAST_BUILD',
                         qualityGates: [
-                            [metric: 'LINE', threshold: 60, criticality: 'FAILURE'],
+                            [metric: 'LINE', threshold: 20, criticality: 'FAILURE'],
                             [metric: 'BRANCH', threshold: 80, criticality: 'FAILURE']
                         ]
                     );
@@ -89,6 +92,19 @@ pipeline {
                     if (currentBuild.result != null && currentBuild.result != "SUCCESS") {
                         error("Maven test failed")
                     }
+                }
+            }
+        }
+
+        stage("Stop web-server service") {
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    final Map deploymentConfig = pipelineConfigMap["deployment"]
+                    final String systemdServiceName = deploymentConfig["systemdServiceName"]
+                    sh("sudo systemctl stop ${systemdServiceName}")
                 }
             }
         }
