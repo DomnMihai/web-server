@@ -14,7 +14,7 @@ pipeline {
     }
     parameters {
         string(defaultValue: 'main', description: '', name: 'source_branch', trim: true)
-        booleanParam(defaultValue: false, description: '', name: 'skip_unit_tests')
+        booleanParam(defaultValue: true, description: '', name: 'skip_unit_tests')
     }
 
     stages {
@@ -105,6 +105,43 @@ pipeline {
                     final Map deploymentConfig = pipelineConfigMap["deployment"]
                     final String systemdServiceName = deploymentConfig["systemdServiceName"]
                     sh("sudo systemctl stop ${systemdServiceName}")
+                }
+            }
+        }
+        stage("Deploy") {
+            options {
+                timeout(time: 7, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    final Map deploymentConfig = pipelineConfigMap["deployment"];
+                    final String appDirectory = deploymentConfig["appDirectory"];
+                    final String jarLinkName = deploymentConfig["jarLinkName"];
+
+                    // Find jar file
+                    String compiledJarListOutput;
+                    dir("target/") {
+                        compiledJarListOutput = sh(script: "ls ${deploymentConfig["jarFilePattern"]}", label: "Find compiled web-server jar", returnStdout: true).trim();
+                    }
+                    final List<String> compiledJarFilesList = compiledJarListOutput.split("\n");
+                    assert compiledJarFilesList.size() == 1 : "Found wrong number of compiled jars. Got ${compiledJarFilesList.size()}";
+                    final String compiledJarFile = compiledJarFilesList[0];
+                    echo("compiledJarFile: ${compiledJarFile}");
+
+                    // Archive artifacts
+                    archiveArtifacts(artifacts: "target/${compiledJarFile}");
+
+                    // Delete old versions
+                    timeout(time: 2, unit: 'MINUTES') {
+                        input(message: 'Proceed with deployment?', ok: 'Proceed');
+                    }
+                    sh("find ${appDirectory} -mindepth 1 -maxdepth 1 -exec rm -r \"{}\" \\;")
+
+                    // Deploy file
+                    sh(script: "mv target/${compiledJarFile} ${appDirectory}/${compiledJarFile}", label: "Deploy web-server jar");
+
+                    // Create symbolic link
+                    sh(script: "ln --symbolic --force ./${compiledJarFile} ${appDirectory}/${jarLinkName}", label: "Create web-server jar symbolic link");
                 }
             }
         }
