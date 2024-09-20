@@ -76,7 +76,7 @@ public class HashMeHandler implements HttpHandler {
         // Upload
         s3Client.putObject(
                 PutObjectRequest.builder()
-                        .bucket("workshops-1-hashed-files-ID")
+                        .bucket("workshops-1-hashed-files-448740566997")
                         .key(key)
                         .tagging(Tagging.builder().tagSet(tags).build())
                         .build(),
