@@ -1,3 +1,5 @@
+String mavenPath;
+
 pipeline {
     agent any
 
