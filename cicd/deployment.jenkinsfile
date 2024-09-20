@@ -145,6 +145,18 @@ pipeline {
                 }
             }
         }
+        stage("Start web-server service") {
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    final Map deploymentConfig = pipelineConfigMap["deployment"]
+                    final String systemdServiceName = deploymentConfig["systemdServiceName"]
+                    sh("sudo systemctl start ${systemdServiceName}")
+                }
+            }
+        }
     }
 
     post {
