@@ -67,6 +67,11 @@ pipeline {
                     final Date dateStart = new Date();
                     sh("curl --fail --silent ${apiUrl}")
                     final Date endStart = new Date();
+
+                    // Assert time
+                    final long timeDiff = endStart.getTime() - dateStart.getTime();
+                    echo("Call duration " + timeDiff);
+                    assert timeDiff < maxResponseTime : "Response from ${apiUrl} took too long"
                 }
             }
         }
