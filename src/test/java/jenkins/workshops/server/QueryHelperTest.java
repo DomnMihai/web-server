@@ -15,7 +15,7 @@ public class QueryHelperTest {
         assertEquals(3, queryMap.size(), "Query map should have 3 elements");
         assertEquals("alfa", queryMap.get("zona"), "Wrong value for 'zona' key");
         assertEquals("ing", queryMap.get("tag"), "Wrong value for 'tag' key");
-        assertEquals("biga", queryMap.get("tag"), "Wrong value for 'ups' key");
+        assertEquals("biga", queryMap.get("ups"), "Wrong value for 'ups' key");
     }
 
     @Test

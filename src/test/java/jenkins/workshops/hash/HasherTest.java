@@ -23,7 +23,7 @@ public class HasherTest {
 
     @Test
     public void testHashSha256() {
-        final String expectedHash = "7e7aee8cdf4f16f611f49f5d303ec892f228cb55f5fd2d2eb068cb9704ca77b8-I-WILL-FAIL";
+        final String expectedHash = "7e7aee8cdf4f16f611f49f5d303ec892f228cb55f5fd2d2eb068cb9704ca77b8";
         final String hash;
         try {
             hash = Hasher.hash("moja kura", "SHA256");

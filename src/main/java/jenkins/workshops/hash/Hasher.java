@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 public class Hasher {
 
     public static String hash(String text, String method) throws NoSuchAlgorithmException {
-        if (text != null2 && method != null) {
+        if (text != null && method != null) {
             final MessageDigest md = MessageDigest.getInstance(method);
             md.update(text.getBytes());
             final byte[] digest = md.digest();

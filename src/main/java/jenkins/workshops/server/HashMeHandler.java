@@ -36,7 +36,7 @@ public class HashMeHandler implements HttpHandler {
         } catch (NoSuchAlgorithmException ex) {
             hash = "<span style='color: red'>WRONG METHOD</span>";
             responseCode = 500;
-            ex.printStackTrace()
+            ex.printStackTrace();
         }
 
         // Response
