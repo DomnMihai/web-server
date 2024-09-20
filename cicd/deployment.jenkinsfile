@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '10', daysToKeepStr: '100', numToKeepStr: '200'))
+        timeout(time: 5, unit: "MINUTES", activity: true)
+        disableConcurrentBuilds()
+        disableResume()
+        skipDefaultCheckout(true)
+        timestamps()
+    }
+    parameters {
+        string(defaultValue: 'main', description: '', name: 'source_branch', trim: true)
+        booleanParam(defaultValue: false, description: '', name: 'skip_unit_tests')
+    }
+
+    stages {
+
+    }
+
+    post {
+        always {
+            script {
+                cleanWs()
+            }
+        }
+    }
+}
