@@ -173,6 +173,20 @@ pipeline {
                 }
             }
         }
+        stage("Terraform apply") {
+            options {
+                timeout(time: 4, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    dir("terraform") {
+                        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-deployment-access-key', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                            sh("terraform apply -auto-approve")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post {
