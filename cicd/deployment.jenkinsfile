@@ -57,6 +57,7 @@ pipeline {
                     mavenPath = tool(name: 'maven-3.9.9', type: 'maven') + "/bin"
                     sh("${mavenPath}/mvn install -DskipTests")
                     sh("ls -lah target/") // DEBUG
+                    sh("printenv")
                 }
             }
         }
