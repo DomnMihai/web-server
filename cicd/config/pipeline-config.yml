@@ -3,3 +3,5 @@ deployment:
   jarLinkName: web-server.jar
   jarFilePattern: web-server-*-jar-with-dependencies.jar
   systemdServiceName: workshops-web-server.service
+monitoring:
+  webServerUrl: http://127.0.0.1:14724/ciezka-praca

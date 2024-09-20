@@ -1,0 +1,82 @@
+Map pipelineConfigMap;
+
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '1', daysToKeepStr: '100', numToKeepStr: '200'))
+        timeout(time: 3, unit: "MINUTES", activity: true)
+        disableConcurrentBuilds()
+        disableResume()
+        skipDefaultCheckout(true)
+        timestamps()
+    }
+    parameters {
+        string(defaultValue: 'main', description: '', name: 'source_branch', trim: true)
+        choice(name: "max_response_time", description: "", choises: ["NAME_RESPONSE_TIME", "500", "1000", "1500", "2000", "2500", "3000"])
+    }
+
+    stages {
+        stage("Checkout") {
+            options {
+                timeout(time: 1, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    // Print parameters
+                    echo("PARAM source_branch: '${params.source_branch}'")
+                    echo("PARAM max_response_time: '${params.max_response_time}'")
+
+                    // Checkout
+                    sh("ls -la") // Debug
+                    currentBuild.description = params.source_branch
+                    checkout(
+                        scm: scmGit(
+                            branches: [[name: "refs/heads/${params.source_branch}"]],
+                            extensions: [cleanBeforeCheckout(deleteUntrackedNestedRepositories: true)],
+                            userRemoteConfigs: [
+                                [credentialsId: 'github-write', url: 'https://github.com/DomnMihai/web-server.git']
+                            ]
+                        ),
+                        changelog: true,
+                        poll: false,
+                    )
+                    sh("ls -la") // Debug
+
+                    // Read configuration
+                    pipelineConfigMap = readYaml(file: "cicd/config/pipeline-config.yml")
+                    echo("pipelineConfigMap:\n" + writeYaml(data: pipelineConfigMap, returnText: true))
+                }
+            }
+        }
+        stage("Test web-server API") {
+            options {
+                timeout(time: 10, unit: "SECONDS")
+            }
+            steps {
+                script {
+                    String maxResponseTimeString = params.max_response_time
+                    if (maxResponseTimeString == "NAME_RESPONSE_TIME") {
+                        maxResponseTimeString = env.JOB_BASE_NAME.split("-")[-1]
+                    }
+                    final int maxResponseTime = maxResponseTimeString.toInteger();
+                    currentBuild.description = currentBuild.description + " | " + maxResponseTime;
+
+                    // Call web-server URL
+                    final String apiUrl = pipelineConfigMap["monitoring"]["webServerUrl"]
+                    final Date dateStart = new Date();
+                    sh("curl --fail --silent ${apiUrl}")
+                    final Date endStart = new Date();
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                cleanWs()
+            }
+        }
+    }
+}

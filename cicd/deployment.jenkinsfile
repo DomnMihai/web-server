@@ -132,9 +132,9 @@ pipeline {
                     archiveArtifacts(artifacts: "target/${compiledJarFile}");
 
                     // Delete old versions
-                    timeout(time: 2, unit: 'MINUTES') {
-                        input(message: 'Proceed with deployment?', ok: 'Proceed');
-                    }
+//                    timeout(time: 2, unit: 'MINUTES') {
+//                        input(message: 'Proceed with deployment?', ok: 'Proceed');
+//                    }
                     sh("find ${appDirectory} -mindepth 1 -maxdepth 1 -exec rm -r \"{}\" \\;")
 
                     // Deploy file
