@@ -61,6 +61,26 @@ pipeline {
                 }
             }
         }
+        stage("Maven test") {
+            when { equals(expected: false, actual: params.skip_unit_tests) }
+            options {
+                timeout(time: 5, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    catchError(buildResult: 'FAILURE', message: 'Maven test fail', stageResult: 'FAILURE') {
+                        sh("${mavenPath}/mvn test")
+                    }
+
+                    junit(stdioRetention: '', testResults: 'target/surefire-reports/TEST-jenkins.workshops.*.xml')
+
+
+                    if (currentBuild.result != null && currentBuild.result != "SUCCESS") {
+                        error("Maven test failed")
+                    }
+                }
+            }
+        }
     }
 
     post {
