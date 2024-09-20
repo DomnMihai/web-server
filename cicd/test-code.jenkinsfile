@@ -50,7 +50,7 @@ timeout(time: 3, unit: "MINUTES") {
                 final String pipelineStatus = currentBuild.result;
 
                 if (pipelineStatus != null && !pipelineStatus.equals("SUCCESS")) {
-                    final String recipients = "EMAIL";
+                    final String recipients = "mihaimihai.prut+w1@gmail.com";
                     final String subject = "web-server tests failed ${env.BUILD_NUMBER}. Pipeline status ${pipelineStatus}";
                     final String body = """Dear user<br>
 <br>
