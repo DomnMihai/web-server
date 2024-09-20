@@ -13,7 +13,7 @@ pipeline {
     }
     parameters {
         string(defaultValue: 'main', description: '', name: 'source_branch', trim: true)
-        choice(name: "max_response_time", description: "", choises: ["NAME_RESPONSE_TIME", "500", "1000", "1500", "2000", "2500", "3000"])
+        choice(name: "max_response_time", description: "", choices: ["NAME_RESPONSE_TIME", "500", "1000", "1500", "2000", "2500", "3000"])
     }
 
     stages {
