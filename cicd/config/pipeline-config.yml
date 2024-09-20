@@ -1,2 +1,5 @@
 deployment:
+  appDirectory: /home/web-app/web-server/run
+  jarLinkName: web-server.jar
+  jarFilePattern: web-server-*-jar-with-dependencies.jar
   systemdServiceName: workshops-web-server.service
