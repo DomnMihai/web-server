@@ -45,6 +45,26 @@ timeout(time: 3, unit: "MINUTES") {
             junit(stdioRetention: '', testResults: 'target/surefire-reports/TEST-jenkins.workshops.*.xml')
         }
 
+        if (params.send_email) {
+            stage('Send email') {
+                final String pipelineStatus = currentBuild.result;
+
+                if (pipelineStatus != null && !pipelineStatus.equals("SUCCESS")) {
+                    final String recipients = "EMAIL";
+                    final String subject = "web-server tests failed ${env.BUILD_NUMBER}. Pipeline status ${pipelineStatus}";
+                    final String body = """Dear user<br>
+<br>
+Jenkins <b>web-server</b> test pipeline failed ${env.BUILD_URL}<br>
+<br>
+Do not reply
+""";
+                    emailext(to: recipients, subject: subject, body: body);
+                } else {
+                    echo("Skipping email sending");
+                }
+            }
+        }
+
         stage("Clean workspace") {
             cleanWs()
         }
