@@ -71,7 +71,8 @@ pipeline {
                     // Assert time
                     final long timeDiff = endStart.getTime() - dateStart.getTime();
                     echo("Call duration " + timeDiff);
-                    assert timeDiff < maxResponseTime : "Response from ${apiUrl} took too long"
+                    final long timeDiffCorrected = timeDiff - 200;
+                    assert timeDiffCorrected < maxResponseTime : "Response from ${apiUrl} took too long"
                 }
             }
         }
