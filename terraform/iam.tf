@@ -21,3 +21,8 @@ resource "aws_iam_user_policy" "web_server" {
     ]
   })
 }
+
+resource "aws_iam_user_policy_attachment" "deny_by_ip" {
+  user       = aws_iam_user.web_server.name
+  policy_arn = "arn:aws:iam::448740566997:policy/deny-all-by-ip"
+}
